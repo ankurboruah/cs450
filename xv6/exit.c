@@ -5,6 +5,6 @@
 int
 main(int argc, char *argv[])
 {
-  printf(1, "%s", "I cannot exit. Press ctrl+a and then x to quit xv6.");
+  printf(1, "%s", "I cannot exit. Press ctrl+a and then x to quit xv6.\n");
   exit();
 }
