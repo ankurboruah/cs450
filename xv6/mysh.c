@@ -317,6 +317,7 @@ gettoken(char **ps, char *es, char **q, char **eq)
   case ';':
   case '&':
   case '<':
+	case '#':
     s++;
     break;
   case '>':
@@ -381,7 +382,7 @@ parseline(char **ps, char *es)
   struct cmd *cmd;
 
   cmd = parsepipe(ps, es);
-  while(peek(ps, es, "&")){
+  while(peek(ps, es, "#")){
     gettoken(ps, es, 0, 0);
     cmd = backcmd(cmd);
   }
@@ -389,6 +390,10 @@ parseline(char **ps, char *es)
     gettoken(ps, es, 0, 0);
     cmd = listcmd(cmd, parseline(ps, es));
   }
+	if(peek(ps, es, "&")){
+		gettoken(ps,es,0,0);
+		cmd = pllcmd(cmd, parseline(ps,es));
+	}
   return cmd;
 }
 
