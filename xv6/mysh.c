@@ -137,8 +137,8 @@ runcmd(struct cmd *cmd)
     break;
   
   //Added case for Parallel Execution
-  case 'PAR':
-		plcmd = (struct parcmd*)cmd;  
+  case PAR:
+		pllcmd = (struct parcmd*)cmd;  
 		if(fork1() == 0){
 		  runcmd(plcmd->left);
 		  runcmd(plcmd->right);
@@ -284,7 +284,7 @@ parcmd(struct cmd *left, struct cmd *right)
 
 	cmd = malloc(sizeof(*cmd));
 	memset(cmd, 0, sizeof(*cmd));
-	cmd->type = 'PAR';
+	cmd->type = PAR;
 	cmd->left = left;
 	cmd->right = right;
 	return (struct cmd*)cmd;
@@ -392,7 +392,7 @@ parseline(char **ps, char *es)
   }
 	if(peek(ps, es, "&")){
 		gettoken(ps,es,0,0);
-		cmd = pllcmd(cmd, parseline(ps,es));
+		cmd = parcmd(cmd, parseline(ps,es));
 	}
   return cmd;
 }
