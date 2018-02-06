@@ -140,8 +140,8 @@ runcmd(struct cmd *cmd)
   case PAR:
 		pllcmd = (struct parcmd*)cmd;  
 		if(fork1() == 0){
-		  runcmd(plcmd->left);
-		  runcmd(plcmd->right);
+		  runcmd(pllcmd->left);
+		  runcmd(pllcmd->right);
     }
 		break;
   }
