@@ -1,4 +1,4 @@
-// Shell.
+// Modified Shell.
 
 #include "types.h"
 #include "user.h"
@@ -10,6 +10,7 @@
 #define PIPE  3
 #define LIST  4
 #define BACK  5
+#define PAR   6
 
 #define MAXARGS 10
 
@@ -49,6 +50,13 @@ struct backcmd {
   struct cmd *cmd;
 };
 
+//Added structure for handling parallel execution
+struct parcmd {
+	int type;			// &
+	struct cmd *left;  // left side of &
+	struct cmd *right; // right side of &
+};
+
 int fork1(void);  // Fork but panics on failure.
 void panic(char*);
 struct cmd *parsecmd(char*);
@@ -63,6 +71,7 @@ runcmd(struct cmd *cmd)
   struct listcmd *lcmd;
   struct pipecmd *pcmd;
   struct redircmd *rcmd;
+  struct parcmd *pllcmd; // added structure initialization for parallel commands
 
   if(cmd == 0)
     exit();
@@ -126,14 +135,24 @@ runcmd(struct cmd *cmd)
     if(fork1() == 0)
       runcmd(bcmd->cmd);
     break;
+  
+  //Added case for Parallel Execution
+  case PAR:
+		pllcmd = (struct parcmd*)cmd;  
+		if(fork1() == 0){
+		  runcmd(pllcmd->left);
+		  runcmd(pllcmd->right);
+    }
+		break;
   }
+  
   exit();
 }
 
 int
 getcmd(char *buf, int nbuf)
 {
-  printf(2, "$ ");
+  printf(2, "CS450$ ");
   memset(buf, 0, nbuf);
   gets(buf, nbuf);
   if(buf[0] == 0) // EOF
@@ -256,6 +275,21 @@ backcmd(struct cmd *subcmd)
   cmd->cmd = subcmd;
   return (struct cmd*)cmd;
 }
+
+//Added definition of parcmd type
+struct cmd*
+parcmd(struct cmd *left, struct cmd *right)
+{
+	struct parcmd *cmd;
+
+	cmd = malloc(sizeof(*cmd));
+	memset(cmd, 0, sizeof(*cmd));
+	cmd->type = PAR;
+	cmd->left = left;
+	cmd->right = right;
+	return (struct cmd*)cmd;
+}
+
 //PAGEBREAK!
 // Parsing
 
@@ -283,6 +317,7 @@ gettoken(char **ps, char *es, char **q, char **eq)
   case ';':
   case '&':
   case '<':
+	case '#':
     s++;
     break;
   case '>':
@@ -347,7 +382,7 @@ parseline(char **ps, char *es)
   struct cmd *cmd;
 
   cmd = parsepipe(ps, es);
-  while(peek(ps, es, "&")){
+  while(peek(ps, es, "#")){
     gettoken(ps, es, 0, 0);
     cmd = backcmd(cmd);
   }
@@ -355,6 +390,10 @@ parseline(char **ps, char *es)
     gettoken(ps, es, 0, 0);
     cmd = listcmd(cmd, parseline(ps, es));
   }
+	if(peek(ps, es, "&")){
+		gettoken(ps,es,0,0);
+		cmd = parcmd(cmd, parseline(ps,es));
+	}
   return cmd;
 }
 
@@ -455,7 +494,8 @@ nulterminate(struct cmd *cmd)
   struct listcmd *lcmd;
   struct pipecmd *pcmd;
   struct redircmd *rcmd;
-
+	struct parcmd *pllcmd;
+	
   if(cmd == 0)
     return 0;
 
@@ -488,6 +528,13 @@ nulterminate(struct cmd *cmd)
     bcmd = (struct backcmd*)cmd;
     nulterminate(bcmd->cmd);
     break;
+
+	case PAR:
+		pllcmd = (struct parcmd*)cmd;
+		nulterminate(pllcmd->left);
+		nulterminate(pllcmd->right);
+		break;
+	
   }
   return cmd;
 }
