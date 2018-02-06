@@ -489,7 +489,8 @@ nulterminate(struct cmd *cmd)
   struct listcmd *lcmd;
   struct pipecmd *pcmd;
   struct redircmd *rcmd;
-
+	struct parcmd *pllcmd;
+	
   if(cmd == 0)
     return 0;
 
@@ -522,6 +523,13 @@ nulterminate(struct cmd *cmd)
     bcmd = (struct backcmd*)cmd;
     nulterminate(bcmd->cmd);
     break;
+
+	case PAR:
+		pllcmd = (struct parcmd*)cmd;
+		nulterminate(pllcmd->left);
+		nulterminate(pllcmd->right);
+		break;
+	
   }
   return cmd;
 }
