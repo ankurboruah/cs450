@@ -368,6 +368,7 @@ parsecmd(char *s)
   es = s + strlen(s);
 	if((s[strlen(s)-1] == '&') || ((s[strlen(s)-1]==' ')&&(s[strlen(s)-2]=='&')){
 		panic("Cannot end with &");
+		return cmd;
 	}
   cmd = parseline(&s, es);
   peek(&s, es, "");
