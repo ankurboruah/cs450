@@ -141,9 +141,8 @@ runcmd(struct cmd *cmd)
 		
     pllcmd = (struct parcmd*)cmd;  
     if(pllcmd->right->type > 6){
-			printf(1, "Cannot end with & ");
-			panic(" ");
-		}
+      panic("Cannot end with & ");
+    }
     if(fork1() == 0){
       runcmd(pllcmd->left);
     }
