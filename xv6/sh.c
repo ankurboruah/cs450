@@ -145,6 +145,8 @@ runcmd(struct cmd *cmd)
 		if(fork1() == 0){
 			runcmd(pllcmd->right);
 		}
+		wait();
+		wait();
 		break;
   }
   
