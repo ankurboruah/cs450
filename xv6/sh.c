@@ -366,16 +366,17 @@ parsecmd(char *s)
   struct cmd *cmd;
 
   es = s + strlen(s);
-	if((s[strlen(s)-1] == '&') || ((s[strlen(s)-1]==' ')&&(s[strlen(s)-2]=='&')){
-		panic("Cannot end with &");
-		return cmd;
-	}
   cmd = parseline(&s, es);
   peek(&s, es, "");
   if(s != es){
     printf(2, "leftovers: %s\n", s);
     panic("syntax");
   }
+	peek(&s, es, "&");
+	if(s == es){
+		printf(1, "Cannot end with &");
+		panic("syntax");
+	}
   nulterminate(cmd);
   return cmd;
 }
