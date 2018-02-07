@@ -374,8 +374,8 @@ parsecmd(char *s)
   }
 	peek(&s, es, "&");
 	if(s == es){
-		printf(1, "Cannot end with &");
-		panic("syntax");
+		printf(1, "Cannot end with & ");
+		panic(" ");
 	}
   nulterminate(cmd);
   return cmd;
