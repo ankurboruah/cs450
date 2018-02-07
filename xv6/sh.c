@@ -140,7 +140,10 @@ runcmd(struct cmd *cmd)
   case PAR:
 		
     pllcmd = (struct parcmd*)cmd;  
-    printf(2, "Right command of type %d\n", pllcmd->right->type);
+    if(pllcmd->right->type > 6){
+			printf(1, "Cannot end with & ");
+			panic(" ");
+		}
     if(fork1() == 0){
       runcmd(pllcmd->left);
     }
