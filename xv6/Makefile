@@ -12,7 +12,6 @@ OBJS = \
 	log.o\
 	main.o\
 	mp.o\
-	mysh.o\
 	picirq.o\
 	pipe.o\
 	proc.o\
@@ -170,7 +169,6 @@ UPROGS=\
 	_ln\
 	_ls\
 	_mkdir\
-	_mysh\
 	_rm\
 	_sh\
 	_stressfs\

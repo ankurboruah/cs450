@@ -52,9 +52,9 @@ struct backcmd {
 
 //Added structure for handling parallel execution
 struct parcmd {
-	int type;			// &
-	struct cmd *left;  // left side of &
-	struct cmd *right; // right side of &
+  int type;			// &
+  struct cmd *left;  // left side of &
+  struct cmd *right; // right side of &
 };
 
 int fork1(void);  // Fork but panics on failure.
@@ -139,20 +139,17 @@ runcmd(struct cmd *cmd)
   //Added case for Parallel Execution
   case PAR:
 		
-		pllcmd = (struct parcmd*)cmd;  
-		if(!pllcmd->right->type){
-			printf(1, "Cannot end command with &");
-			panic(" ");
-		}
-		if(fork1() == 0){
-		  runcmd(pllcmd->left);
+    pllcmd = (struct parcmd*)cmd;  
+    printf(2, "Right command of type %d\n", pllcmd->right->type);
+    if(fork1() == 0){
+      runcmd(pllcmd->left);
     }
-		if(fork1() == 0){
-			runcmd(pllcmd->right);
-		}
-		wait();
-		wait();
-		break;
+    if(fork1() == 0){
+      runcmd(pllcmd->right);
+    }
+    wait();
+    wait();
+    break;
   }
   
   exit();
@@ -289,14 +286,14 @@ backcmd(struct cmd *subcmd)
 struct cmd*
 parcmd(struct cmd *left, struct cmd *right)
 {
-	struct parcmd *cmd;
+  struct parcmd *cmd;
 
-	cmd = malloc(sizeof(*cmd));
-	memset(cmd, 0, sizeof(*cmd));
-	cmd->type = PAR;
-	cmd->left = left;
-	cmd->right = right;
-	return (struct cmd*)cmd;
+  cmd = malloc(sizeof(*cmd));
+  memset(cmd, 0, sizeof(*cmd));
+  cmd->type = PAR;
+  cmd->left = left;
+  cmd->right = right;
+  return (struct cmd*)cmd;
 }
 
 //PAGEBREAK!
@@ -391,6 +388,9 @@ parseline(char **ps, char *es)
 {
   struct cmd *cmd;
 
+  if(*ps == es){
+    return 0;
+  }
   cmd = parsepipe(ps, es);
   while(peek(ps, es, "#")){
     gettoken(ps, es, 0, 0);
@@ -400,10 +400,10 @@ parseline(char **ps, char *es)
     gettoken(ps, es, 0, 0);
     cmd = listcmd(cmd, parseline(ps, es));
   }
-	if(peek(ps, es, "&")){
-		gettoken(ps,es,0,0);
-		cmd = parcmd(cmd, parseline(ps,es));
-	}
+  if(peek(ps, es, "&")){
+    gettoken(ps,es,0,0);
+    cmd = parcmd(cmd, parseline(ps,es));
+  }
   return cmd;
 }
 
@@ -539,11 +539,11 @@ nulterminate(struct cmd *cmd)
     nulterminate(bcmd->cmd);
     break;
 
-	case PAR:
-		pllcmd = (struct parcmd*)cmd;
-		nulterminate(pllcmd->left);
-		nulterminate(pllcmd->right);
-		break;
+  case PAR:
+    pllcmd = (struct parcmd*)cmd;
+    nulterminate(pllcmd->left);
+    nulterminate(pllcmd->right);
+    break;
 	
   }
   return cmd;
