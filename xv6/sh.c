@@ -373,7 +373,7 @@ parsecmd(char *s)
     panic("syntax");
   }
 	peek(&s, es, "&");
-	if(s == es){
+	if(s != es){
 		printf(1, "Cannot end with & ");
 		panic(" ");
 	}
