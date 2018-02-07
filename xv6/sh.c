@@ -366,6 +366,9 @@ parsecmd(char *s)
   struct cmd *cmd;
 
   es = s + strlen(s);
+	if((s[es-1] == '&') || ((s[es-1]==' ')&&(s[es-2]=='&')){
+		panic("Cannot end with &");
+	}
   cmd = parseline(&s, es);
   peek(&s, es, "");
   if(s != es){
