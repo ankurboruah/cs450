@@ -141,8 +141,10 @@ runcmd(struct cmd *cmd)
 		pllcmd = (struct parcmd*)cmd;  
 		if(fork1() == 0){
 		  runcmd(pllcmd->left);
-		  runcmd(pllcmd->right);
     }
+		if(fork1() == 0){
+			runcmd(pllcmd->right);
+		}
 		break;
   }
   
@@ -372,11 +374,7 @@ parsecmd(char *s)
     printf(2, "leftovers: %s\n", s);
     panic("syntax");
   }
-	peek(&s, es, "&");
-	if(s != es){
-		printf(1, "Cannot end with & ");
-		panic(" ");
-	}
+	
   nulterminate(cmd);
   return cmd;
 }
