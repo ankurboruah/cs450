@@ -138,7 +138,7 @@ runcmd(struct cmd *cmd)
   
   //Added case for Parallel Execution
   case PAR:
-		if(pllcmd->right == NULL){
+		if(pllcmd->right == 0){
 			printf(1, "Cannot end command with &");
 			panic(" ");
 		}
