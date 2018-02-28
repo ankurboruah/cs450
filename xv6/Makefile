@@ -1,6 +1,7 @@
 OBJS = \
 	bio.o\
 	console.o\
+	counttester.o\
 	exec.o\
 	file.o\
 	fs.o\
@@ -160,6 +161,7 @@ mkfs: mkfs.c fs.h
 
 UPROGS=\
 	_cat\
+	_counttester\
 	_echo\
 	_exit\
 	_forktest\

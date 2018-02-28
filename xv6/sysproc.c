@@ -89,3 +89,11 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
+
+//return how many calls to a system call
+extern int callcount[22];
+int
+sys_getsyscallcount(int num)
+{
+  return callcount[num];
+}
