@@ -10,7 +10,8 @@
 #define PIPE  3
 #define LIST  4
 #define BACK  5
-#define PAR   6
+//addition of PAR to handle parallel commands
+#define PAR   6	
 
 #define MAXARGS 10
 
@@ -140,14 +141,14 @@ runcmd(struct cmd *cmd)
   case PAR:
 		
     pllcmd = (struct parcmd*)cmd;  
-    if(pllcmd->right->type > 6){
+    if(pllcmd->right->type > 6){ // This happens when the entire command ends with '&'
       panic("Cannot end with & ");
     }
     if(fork1() == 0){
-      runcmd(pllcmd->left);
+      runcmd(pllcmd->left);  	//Forking and running the command left of &
     }
     if(fork1() == 0){
-      runcmd(pllcmd->right);
+      runcmd(pllcmd->right);	//	//Forking and running the command left of &
     }
     wait();
     wait();
@@ -160,7 +161,7 @@ runcmd(struct cmd *cmd)
 int
 getcmd(char *buf, int nbuf)
 {
-  printf(2, "CS450$ ");
+  printf(2, "CS450$ "); 	//Chnaged the prompt to the required prompt.
   memset(buf, 0, nbuf);
   gets(buf, nbuf);
   if(buf[0] == 0) // EOF
@@ -284,7 +285,7 @@ backcmd(struct cmd *subcmd)
   return (struct cmd*)cmd;
 }
 
-//Added definition of parcmd type
+//Added constructor of parcmd type
 struct cmd*
 parcmd(struct cmd *left, struct cmd *right)
 {
@@ -394,7 +395,7 @@ parseline(char **ps, char *es)
     return 0;
   }
   cmd = parsepipe(ps, es);
-  while(peek(ps, es, "#")){
+  while(peek(ps, es, "#")){ // Changed the token on which backcmd is called to # as it was assigned to & earlier
     gettoken(ps, es, 0, 0);
     cmd = backcmd(cmd);
   }
@@ -402,7 +403,7 @@ parseline(char **ps, char *es)
     gettoken(ps, es, 0, 0);
     cmd = listcmd(cmd, parseline(ps, es));
   }
-  if(peek(ps, es, "&")){
+  if(peek(ps, es, "&")){	// Added this peek function call to check for parallel execution commands
     gettoken(ps,es,0,0);
     cmd = parcmd(cmd, parseline(ps,es));
   }
@@ -541,7 +542,7 @@ nulterminate(struct cmd *cmd)
     nulterminate(bcmd->cmd);
     break;
 
-  case PAR:
+  case PAR:	//Followed the above structure of code to handle parallel commands
     pllcmd = (struct parcmd*)cmd;
     nulterminate(pllcmd->left);
     nulterminate(pllcmd->right);
