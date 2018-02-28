@@ -130,7 +130,7 @@ static int (*syscalls[])(void) = {
 [SYS_getsyscallcount] sys_getsyscallcount,
 };
 
-int callcount[22];
+int callcount[23];
 
 void
 syscall(void)

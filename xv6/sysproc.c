@@ -91,9 +91,13 @@ sys_uptime(void)
 }
 
 //return how many calls to a system call
-extern int callcount[22];
+extern int callcount[23];
 int
-sys_getsyscallcount(int num)
+sys_getsyscallcount(void)
 {
-  return callcount[num];
+    int num = 0;
+    argint(0, &num); //getting system call number
+
+    if(num>22 || num <1) return -1;
+    return callcount[num];
 }

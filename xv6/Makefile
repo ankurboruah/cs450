@@ -1,7 +1,6 @@
 OBJS = \
 	bio.o\
 	console.o\
-	counttester.o\
 	exec.o\
 	file.o\
 	fs.o\
