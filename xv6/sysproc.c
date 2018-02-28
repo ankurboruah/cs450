@@ -91,7 +91,6 @@ sys_uptime(void)
 }
 
 //return how many calls to a system call
-extern int callcount[23];
 int
 sys_getsyscallcount(void)
 {

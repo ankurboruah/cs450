@@ -262,6 +262,9 @@ exit(void)
   }
 
   // Jump into the scheduler, never to return.
+  for(int i=0; i<23; i++){
+    curproc->syscallcount[i] = 0;
+  }
   curproc->state = ZOMBIE;
   sched();
   panic("zombie exit");

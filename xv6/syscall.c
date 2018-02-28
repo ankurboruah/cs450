@@ -130,7 +130,6 @@ static int (*syscalls[])(void) = {
 [SYS_getsyscallcount] sys_getsyscallcount,
 };
 
-extern int callcount[23];
 
 void
 syscall(void)

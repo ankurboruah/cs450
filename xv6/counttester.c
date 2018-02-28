@@ -1,20 +1,23 @@
 #include "syscall.h"
 #include "types.h"
 #include "user.h"
-//#include "syscall.c"
 #include "stat.h"
 
-int initialcallcount[23];
 
 int
 main(int argc, char *argv[])
 {
-  /*for(int i=0; i<23; i++){
-    printf(1, "Initial value of callcount[%d] = %d\n", i, initialcallcount[i]);
-    }*/
   char *source = "Hello";
-  char *dest = "";
+  char dest[512], buf[1];
   strcpy(dest, source);
+  int n, fd;
+  if((fd = open("out.txt",0))<0) return -1;
+  while((n = read(fd, buf, sizeof(buf))) > 0) {
+    if (write(1, buf, n) != n) {
+      printf(1, "console: write error\n");
+      exit();
+    }
+  }
   printf(1, "%s %s", dest, "\n");
   printf(1, "read count %d\n", getsyscallcount(SYS_read));
   printf(1, "initial fork count %d\n", getsyscallcount(SYS_fork));
