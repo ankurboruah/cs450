@@ -92,7 +92,7 @@ sys_uptime(void)
 
 //return how many calls to a system call
 int
-sys_getsyscallcount(void)
+sys_getcallcount(void)
 {
     int num = 0;
     argint(0, &num); //getting system call number
