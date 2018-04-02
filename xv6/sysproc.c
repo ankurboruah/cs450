@@ -98,6 +98,16 @@ sys_getcallcount(void)
     argint(0, &num); //getting system call number
 
     struct proc *curproc = myproc();
-    if(num>22 || num <1) return -1;
+    if(num>23 || num <1) return -1;
     return curproc->syscallcount[num];
+}
+
+int
+sys_myMemory(void)
+{
+    int num = 0;
+    argint(0, &num); //getting system call number
+
+    struct proc *curproc = myproc();
+    return curproc->sz;
 }
