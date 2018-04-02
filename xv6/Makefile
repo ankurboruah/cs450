@@ -169,6 +169,7 @@ UPROGS=\
 	_kill\
 	_ln\
 	_ls\
+	_memtest\
 	_mkdir\
 	_rm\
 	_sh\

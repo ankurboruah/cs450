@@ -105,9 +105,19 @@ sys_getcallcount(void)
 int
 sys_myMemory(void)
 {
-    int num = 0;
-    argint(0, &num); //getting system call number
+    //int num = 0;
+    //argint(0, &num); //getting system call number
+
+    pde_t *pde;
+    pte_t *pgtab, *pte;
 
     struct proc *curproc = myproc();
-    return curproc->sz;
-}
+    uint memsize = curproc->sz;
+    printf(1, "\nMemory Usage: %d", memsize);
+    printf(1, "\nMemory usage in pages: %d\n", (memsize/4096));
+
+    pde = &curproc->pgdir[PDX(va)];
+    pte = &pgtab[PTX(va)];
+
+    
+} 
