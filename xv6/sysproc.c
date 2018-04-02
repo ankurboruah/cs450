@@ -116,8 +116,12 @@ sys_myMemory(void)
     printf(1, "\nMemory Usage: %d", memsize);
     printf(1, "\nMemory usage in pages: %d\n", (memsize/4096));
 
-    pde = &curproc->pgdir[PDX(va)];
-    pte = &pgtab[PTX(va)];
-
-    
+    uint vadd = P2V(PHYSTOP);
+	pde = &curproc->pgdir[PDX(vadd)];
+    pte = &pgtab[PTX(vadd)];
+	
+	printf(1, "\nPDE = %x", pde);
+	printf(1, "\nPTE = %x", pte);
+	
+	return 0;
 } 
