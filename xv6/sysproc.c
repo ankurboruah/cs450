@@ -105,23 +105,29 @@ sys_getcallcount(void)
 int
 sys_myMemory(void)
 {
-    //int num = 0;
+    long int pagecount = 0, writecount=0, usercount=0;
     //argint(0, &num); //getting system call number
 
     pde_t *pde;
-    pte_t *pgtab, *pte;
+    pte_t *pgtab;
 
     struct proc *curproc = myproc();
-    uint memsize = curproc->sz;
-    printf(1, "\nMemory Usage: %d", memsize);
-    printf(1, "\nMemory usage in pages: %d\n", (memsize/4096));
 
-    uint vadd = P2V(PHYSTOP);
-	pde = &curproc->pgdir[PDX(vadd)];
-    pte = &pgtab[PTX(vadd)];
-	
-	printf(1, "\nPDE = %x", pde);
-	printf(1, "\nPTE = %x", pte);
-	
-	return 0;
+    pde = &curproc->pgdir[0];
+    for(int i=0; i<1024; i++){
+    	if(*pde & PTE_P){
+	    pgtab = (pte_t*)P2V(PTE_ADDR(*pde));
+	    for(int j=0; j<1024; j++){
+		if(*pgtab & PTE_P) pagecount++;
+		if((*pgtab & PTE_P)&&(*pgtab & PTE_U)) usercount++;
+		if((*pgtab & PTE_P)&&(*pgtab & PTE_U)&&(*pgtab & PTE_W)) writecount++;
+		pgtab++;
+	    }
+	} 
+	pde++;
+    }	
+    cprintf("Pages in use: %d\n", pagecount);
+    cprintf("User Accessible Pages: %d\n", usercount);
+    cprintf("User Writeable Pages: %d\n", writecount);
+    return 0;
 } 
