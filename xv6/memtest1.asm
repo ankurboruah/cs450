@@ -39,6 +39,7 @@ main(int argc, char *argv[])
   3e:	66 90                	xchg   %ax,%ax
 
 00000040 <bar>:
+
 #include "types.h"
 #include "syscall.h"
 #include "user.h"
@@ -49,7 +50,7 @@ int bar(int y){
   43:	53                   	push   %ebx
   44:	83 ec 08             	sub    $0x8,%esp
   47:	8b 5d 08             	mov    0x8(%ebp),%ebx
-	int x[64*1024*4096];
+	int x[64*1024*4096]; // static allocations
 	x[0]=1;
 	x[64*1024*4095+25]=0;
 	printf(1, "\nBar: %d\n", y);
@@ -57,7 +58,7 @@ int bar(int y){
   4b:	68 40 07 00 00       	push   $0x740
   50:	6a 01                	push   $0x1
   52:	e8 c9 03 00 00       	call   420 <printf>
-	myMemory();
+	myMemory();	//no changes in number of pages used
   57:	e8 0e 03 00 00       	call   36a <myMemory>
 	if(y==0){return x[0];}
   5c:	83 c4 10             	add    $0x10,%esp

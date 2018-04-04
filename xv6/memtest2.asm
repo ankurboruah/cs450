@@ -39,6 +39,7 @@ main(int argc, char *argv[])
   3e:	66 90                	xchg   %ax,%ax
 
 00000040 <foo>:
+
 #include "types.h"
 #include "syscall.h"
 #include "user.h"
@@ -49,7 +50,7 @@ int* foo(int y){
   43:	56                   	push   %esi
   44:	53                   	push   %ebx
   45:	8b 5d 08             	mov    0x8(%ebp),%ebx
-	int *x=malloc(8*1024);
+	int *x=malloc(8*1024); //Dynamic Allocation
   48:	83 ec 0c             	sub    $0xc,%esp
   4b:	68 00 20 00 00       	push   $0x2000
   50:	e8 1b 06 00 00       	call   670 <malloc>
@@ -62,7 +63,7 @@ int* foo(int y){
   62:	68 60 07 00 00       	push   $0x760
   67:	6a 01                	push   $0x1
   69:	e8 d2 03 00 00       	call   440 <printf>
-	myMemory();
+	myMemory(); //Page usage changes by 8 everytime it needs a new page as 32KB is allocated.
   6e:	e8 17 03 00 00       	call   38a <myMemory>
 	if(y==0){return x;}
   73:	83 c4 10             	add    $0x10,%esp
