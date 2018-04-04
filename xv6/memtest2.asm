@@ -24,8 +24,8 @@ main(int argc, char *argv[])
   18:	e8 23 04 00 00       	call   440 <printf>
 	myMemory();
   1d:	e8 68 03 00 00       	call   38a <myMemory>
-	foo(99);
-  22:	c7 04 24 63 00 00 00 	movl   $0x63,(%esp)
+	foo(9);
+  22:	c7 04 24 09 00 00 00 	movl   $0x9,(%esp)
   29:	e8 12 00 00 00       	call   40 <foo>
 }
   2e:	8b 4d fc             	mov    -0x4(%ebp),%ecx
@@ -49,13 +49,13 @@ int* foo(int y){
   43:	56                   	push   %esi
   44:	53                   	push   %ebx
   45:	8b 5d 08             	mov    0x8(%ebp),%ebx
-	int *x=malloc(1024);
+	int *x=malloc(8*1024);
   48:	83 ec 0c             	sub    $0xc,%esp
-  4b:	68 00 04 00 00       	push   $0x400
+  4b:	68 00 20 00 00       	push   $0x2000
   50:	e8 1b 06 00 00       	call   670 <malloc>
   55:	89 c6                	mov    %eax,%esi
-	printf(1, "\nFoo %d\n", 100-y);
-  57:	b8 64 00 00 00       	mov    $0x64,%eax
+	printf(1, "\nFoo %d\n", 10-y);
+  57:	b8 0a 00 00 00       	mov    $0xa,%eax
   5c:	83 c4 0c             	add    $0xc,%esp
   5f:	29 d8                	sub    %ebx,%eax
   61:	50                   	push   %eax

@@ -24,10 +24,6 @@ main(int argc, char *argv[])
   18:	e8 03 04 00 00       	call   420 <printf>
 	myMemory();
   1d:	e8 48 03 00 00       	call   36a <myMemory>
-	//const int array[1024*4096];
-	//printf(1, "\nSize of Array: %d\n", sizeof(array));
-	//printf(1, "\nConst Int Array");
-	//myMemory();
 	bar(9); 
   22:	c7 04 24 09 00 00 00 	movl   $0x9,(%esp)
   29:	e8 12 00 00 00       	call   40 <bar>
