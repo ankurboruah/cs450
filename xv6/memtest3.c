@@ -1,3 +1,5 @@
+/* Created for CS450 PA3 Spring 2018 by Group 8, Shahzil Sheikh(A20353481) and Ankur Boruah(A20392013)*/
+
 #include "types.h"
 #include "syscall.h"
 #include "user.h"
@@ -12,7 +14,7 @@ main(int argc, char *argv[])
 	myMemory();
 	free(x);
 	printf(1, "\nFree 12*1024\n");	
-	myMemory();
+	myMemory(); //Page not returned after free. Still being used by process.
 	int *y = malloc(24*1024);
 	printf(1, "\n24*1024: %d\n", sizeof(y));
 	myMemory();

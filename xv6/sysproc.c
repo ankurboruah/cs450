@@ -102,11 +102,11 @@ sys_getcallcount(void)
     return curproc->syscallcount[num];
 }
 
+//Printing the number of pages in use, user accessible and writable.
 int
 sys_myMemory(void)
 {
     long int pagecount = 0, writecount=0, usercount=0;
-    //argint(0, &num); //getting system call number
 
     pde_t *pde;
     pte_t *pgtab;
@@ -118,10 +118,10 @@ sys_myMemory(void)
     	if(*pde & PTE_P){
 	    pgtab = (pte_t*)P2V(PTE_ADDR(*pde));
 	    for(int j=0; j<1024; j++){
-		if(*pgtab & PTE_P) pagecount++;
-		if((*pgtab & PTE_P)&&(*pgtab & PTE_U)) usercount++;
-		if((*pgtab & PTE_P)&&(*pgtab & PTE_U)&&(*pgtab & PTE_W)) writecount++;
-		pgtab++;
+			if(*pgtab & PTE_P) pagecount++; //Page is present
+			if((*pgtab & PTE_P)&&(*pgtab & PTE_U)) usercount++;	//Pages accessible by user program.
+			if((*pgtab & PTE_P)&&(*pgtab & PTE_U)&&(*pgtab & PTE_W)) writecount++; //Pages writable by the user program
+			pgtab++;
 	    }
 	} 
 	pde++;
