@@ -161,6 +161,7 @@ mkfs: mkfs.c fs.h
 UPROGS=\
 	_cat\
 	_counttester\
+	_directoryWalker\
 	_echo\
 	_exit\
 	_forktest\

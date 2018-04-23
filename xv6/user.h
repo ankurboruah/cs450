@@ -29,6 +29,7 @@ int myMemory(void);
 // ulib.c
 int stat(char*, struct stat*);
 char* strcpy(char*, char*);
+char* strcat(char*, char*);
 void *memmove(void*, void*, int);
 char* strchr(const char*, char c);
 int strcmp(const char*, const char*);
