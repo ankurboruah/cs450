@@ -748,10 +748,12 @@ SYSCALL(myMemory)
  3aa:	b8 17 00 00 00       	mov    $0x17,%eax
  3af:	cd 40                	int    $0x40
  3b1:	c3                   	ret    
- 3b2:	66 90                	xchg   %ax,%ax
- 3b4:	66 90                	xchg   %ax,%ax
- 3b6:	66 90                	xchg   %ax,%ax
- 3b8:	66 90                	xchg   %ax,%ax
+
+000003b2 <fsop>:
+SYSCALL(fsop)
+ 3b2:	b8 18 00 00 00       	mov    $0x18,%eax
+ 3b7:	cd 40                	int    $0x40
+ 3b9:	c3                   	ret    
  3ba:	66 90                	xchg   %ax,%ax
  3bc:	66 90                	xchg   %ax,%ax
  3be:	66 90                	xchg   %ax,%ax

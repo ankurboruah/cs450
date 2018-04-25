@@ -25,6 +25,7 @@ int sleep(int);
 int uptime(void);
 int getcallcount(int);
 int myMemory(void);
+int fsop(int);
 
 // ulib.c
 int stat(char*, struct stat*);

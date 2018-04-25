@@ -214,6 +214,46 @@ ialloc(uint dev, short type)
   panic("ialloc: no inodes");
 }
 
+
+void lsnode() {
+  int inum;
+  struct buf *bp;
+  struct dinode *dip;
+
+  for(inum = 1; inum < sb.ninodes; inum++){
+    bp = bread(ROOTDEV, IBLOCK(inum, sb));
+    dip = (struct dinode*)bp->data + inum%IPB;
+    if(dip->type == 0){  // a free inode
+      // memset(dip, 0, sizeof(*dip));
+      // dip->type = type;
+      // log_write(bp);   // mark it allocated on the disk
+      // brelse(bp);
+      // return iget(dev, inum);
+    } else if (dip->type == T_DIR || dip->type == T_FILE) {
+      cprintf("allocated inode %d, type %d, nlink %d\n", inum, dip->type, dip->nlink);
+    }
+    brelse(bp);
+  }
+}
+
+void erasenode(int inum) {
+
+  begin_op();
+  struct inode *ino; 
+
+  ino = iget(ROOTDEV, inum);
+  ilock(ino);
+  for (int i = 0; i < NDIRECT; i++) {
+    ino->addrs[i] = 0;
+  }
+  ino->nlink--;
+  iupdate(ino);
+  iunlockput(ino);
+  end_op();
+  return;
+}
+
+
 // Copy a modified in-memory inode to disk.
 // Must be called after every change to an ip->xxx field
 // that lives on disk, since i-node cache is write-through.

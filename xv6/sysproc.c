@@ -6,6 +6,7 @@
 #include "memlayout.h"
 #include "mmu.h"
 #include "proc.h"
+#include "fs.h"
 
 int
 sys_fork(void)
@@ -131,3 +132,20 @@ sys_myMemory(void)
     cprintf("User Writeable Pages: %d\n", writecount);
     return 0;
 } 
+
+int sys_fsop(void) {
+  int op;
+
+  if (argint(0, &op) < 0) {
+    return -1;
+  }
+  
+  if (op == 0) {
+    lsnode();
+  }
+  else {
+    erasenode(op);
+  }
+
+  return 0;
+}

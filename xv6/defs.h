@@ -39,6 +39,8 @@ void            readsb(int dev, struct superblock *sb);
 int             dirlink(struct inode*, char*, uint);
 struct inode*   dirlookup(struct inode*, char*, uint*);
 struct inode*   ialloc(uint, short);
+void 		lsnode(void);
+void		erasenode(int);
 struct inode*   idup(struct inode*);
 void            iinit(int dev);
 void            ilock(struct inode*);

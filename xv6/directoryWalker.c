@@ -9,22 +9,21 @@ fmtname(char *path)
 {
   static char buf[DIRSIZ+1];
   char *p;
-
   // Find first character after last slash.
   for(p=path+strlen(path); p >= path && *p != '/'; p--)
     ;
   p++;
-
   // Return blank-padded name.
-  if(strlen(p) >= DIRSIZ)
+  if(strlen(p) >= DIRSIZ){
     return p;
+  }
   memmove(buf, p, strlen(p));
   memset(buf+strlen(p), ' ', DIRSIZ-strlen(p));
   return buf;
 }
 
 void
-ls(char *path)
+walk(char *path)
 {
   char buf[512], *p, newpath[512];
   int fd;
@@ -36,11 +35,14 @@ ls(char *path)
     return;
   }
 
+
   if(fstat(fd, &st) < 0){
     printf(2, "ls: cannot stat %s\n", path);
     close(fd);
     return;
   }
+
+
   switch(st.type){
   case T_FILE:
     printf(1, "%s %s %d\n", fmtname(path), "Inode", st.ino);
@@ -54,7 +56,6 @@ ls(char *path)
     strcpy(buf, path);
     p = buf+strlen(buf);
     *p++ = '/';
-    printf(1, "Start of Directory: %s\n", path);
     while(read(fd, &de, sizeof(de)) == sizeof(de)){
       if(de.inum == 0)
         continue;
@@ -69,9 +70,8 @@ ls(char *path)
       if(st.type == T_FILE){continue;}
       strcpy(newpath, buf);
       strcat(newpath, fmtname(buf));
-      ls(newpath);
+      walk(newpath);
     }
-    printf(1, "End of Directory: %s\n", path);
     break;
   }
   close(fd);
@@ -82,7 +82,7 @@ int
 main(int argc, char *argv[])
 {
   if(argc < 2){
-    ls(".");
+    walk(".");
     exit();
   }
 }

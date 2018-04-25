@@ -163,10 +163,12 @@ UPROGS=\
 	_counttester\
 	_directoryWalker\
 	_echo\
+	_erasenode\
 	_exit\
 	_forktest\
 	_grep\
 	_init\
+	_inodeWalker\
 	_kill\
 	_ln\
 	_ls\
