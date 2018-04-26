@@ -133,19 +133,3 @@ sys_myMemory(void)
     return 0;
 } 
 
-int sys_fsop(void) {
-  int op;
-
-  if (argint(0, &op) < 0) {
-    return -1;
-  }
-  
-  if (op == 0) {
-    lsnode();
-  }
-  else {
-    erasenode(op);
-  }
-
-  return 0;
-}

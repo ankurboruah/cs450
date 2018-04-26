@@ -105,7 +105,11 @@ extern int sys_write(void);
 extern int sys_uptime(void);
 extern int sys_getcallcount(void);
 extern int sys_myMemory(void);
-extern int sys_fsop(void);
+extern int sys_directoryWalker(void);
+extern int sys_inodeBMWalker(void);
+extern int sys_walkerComparer(void);
+extern int sys_damageDirectoryInode(void);
+extern int sys_fsRecovery(void);
 
 static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -131,7 +135,11 @@ static int (*syscalls[])(void) = {
 [SYS_close]   sys_close,
 [SYS_getcallcount] sys_getcallcount,
 [SYS_myMemory] sys_myMemory,
-[SYS_fsop] sys_fsop,
+[SYS_directoryWalker]	sys_directoryWalker,
+[SYS_inodeBMWalker] sys_inodeBMWalker,
+[SYS_walkerComparer]		sys_walkerComparer,
+[SYS_damageDirectoryInode] sys_damageDirectoryInode,
+[SYS_fsRecovery]		sys_fsRecovery,
 };
 
 

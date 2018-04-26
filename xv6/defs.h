@@ -39,8 +39,6 @@ void            readsb(int dev, struct superblock *sb);
 int             dirlink(struct inode*, char*, uint);
 struct inode*   dirlookup(struct inode*, char*, uint*);
 struct inode*   ialloc(uint, short);
-void 		lsnode(void);
-void		erasenode(int);
 struct inode*   idup(struct inode*);
 void            iinit(int dev);
 void            ilock(struct inode*);
@@ -54,6 +52,12 @@ struct inode*   nameiparent(char*, char*);
 int             readi(struct inode*, char*, uint, uint);
 void            stati(struct inode*, struct stat*);
 int             writei(struct inode*, char*, uint, uint);
+
+int dirWalker(char *);
+int inodeWalker(void);
+int walkerComparison(void);
+int eraseInode(int);
+int recoveryWalker(void);
 
 // ide.c
 void            ideinit(void);

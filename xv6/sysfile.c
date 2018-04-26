@@ -443,3 +443,32 @@ sys_pipe(void)
   fd[1] = fd1;
   return 0;
 }
+int sys_directoryWalker(void){
+	char *path;
+	if(argstr(0,&path) < 0){
+		return -1;
+	}
+	return dirWalker(path);
+}
+
+int sys_inodeBMWalker(void)
+{
+  inodeWalker();
+  return 1;
+}
+
+int sys_walkerComparer(void){
+	return walkerComparison();
+}
+
+int sys_damageDirectoryInode(void){
+	int inum;
+	if(argint(0,&inum) < 0){
+		return -1;
+	}
+  return eraseInode(inum);
+}
+
+int sys_fsRecovery(void){
+	return recoveryWalker();
+}

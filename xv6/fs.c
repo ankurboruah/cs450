@@ -27,6 +27,11 @@ static void itrunc(struct inode*);
 // only one device
 struct superblock sb; 
 
+#define NUMINODES 50
+int arr_Inode[NUMINODES];
+int arr_Directory[NUMINODES];
+int arr_Comparison[NUMINODES];
+
 // Read the super block.
 void
 readsb(int dev, struct superblock *sb)
@@ -213,46 +218,6 @@ ialloc(uint dev, short type)
   }
   panic("ialloc: no inodes");
 }
-
-
-void lsnode() {
-  int inum;
-  struct buf *bp;
-  struct dinode *dip;
-
-  for(inum = 1; inum < sb.ninodes; inum++){
-    bp = bread(ROOTDEV, IBLOCK(inum, sb));
-    dip = (struct dinode*)bp->data + inum%IPB;
-    if(dip->type == 0){  // a free inode
-      // memset(dip, 0, sizeof(*dip));
-      // dip->type = type;
-      // log_write(bp);   // mark it allocated on the disk
-      // brelse(bp);
-      // return iget(dev, inum);
-    } else if (dip->type == T_DIR || dip->type == T_FILE) {
-      cprintf("allocated inode %d, type %d, nlink %d\n", inum, dip->type, dip->nlink);
-    }
-    brelse(bp);
-  }
-}
-
-void erasenode(int inum) {
-
-  begin_op();
-  struct inode *ino; 
-
-  ino = iget(ROOTDEV, inum);
-  ilock(ino);
-  for (int i = 0; i < NDIRECT; i++) {
-    ino->addrs[i] = 0;
-  }
-  ino->nlink--;
-  iupdate(ino);
-  iunlockput(ino);
-  end_op();
-  return;
-}
-
 
 // Copy a modified in-memory inode to disk.
 // Must be called after every change to an ip->xxx field
@@ -708,4 +673,173 @@ struct inode*
 nameiparent(char *path, char *name)
 {
   return namex(path, 1, name);
+}
+
+
+//directory walker
+int dirWalker(char *path){
+	struct inode* dp = namei(path);
+	if(dp == 0){
+		return -1;
+	}
+	struct dirent de;
+	ilock(dp);
+	if(dp->type == T_DIR){
+		uint off;
+    cprintf("Start of Directory %s\n:", path);
+		for(off = 0; off < dp->size; off += sizeof(de)){
+			if(readi(dp,(char*)&de, off, sizeof(de)) != sizeof(de)){
+        cprintf("Size doesn't match!");
+			}
+			if((strncmp(de.name,".",5) == 0)|| (strncmp(de.name,"..",5) == 0)){
+				arr_Directory[de.inum] = 1;
+				cprintf("%s \t",de.name);
+				cprintf("inode %d\n",de.inum);
+				continue;
+			}
+			if(de.inum > 0){
+				struct inode* innerDirectory = dirlookup(dp, de.name, 0);
+				ilock(innerDirectory);
+				if(innerDirectory->type == T_DIR){
+					iunlock(innerDirectory);
+					arr_Directory[de.inum] = 1;
+					cprintf("Directory Name: %s\t",de.name);
+					cprintf("inode %d:\n",de.inum);
+					iunlock(dp);
+					dirWalker(de.name);
+					ilock(dp);
+				}
+				if(innerDirectory->type == T_FILE){
+					iunlock(innerDirectory);
+					arr_Directory[de.inum] = 1;
+					cprintf("File %s \t\t",de.name);
+					cprintf("inode %d\n",de.inum);
+				}
+				if(innerDirectory->type == T_DEV){
+					iunlock(innerDirectory);
+          arr_Directory[de.inum] = 1;
+				}
+			}
+
+		}
+	}
+	iunlock(dp);
+  cprintf("End of Directory %s:\n", path);
+	return 0;
+}
+
+//inodeBMWalker
+int inodeWalker(void)
+{
+  int i;
+  for(i=0;i<NUMINODES;i++)
+  {
+    arr_Inode[i] = 0;
+  }
+
+  int inum;
+  struct buf *bp;
+  struct dinode *dip;
+
+  cprintf("Allocated Inodes: \n");
+  for(inum = 1; inum < NUMINODES; inum++){
+    bp = bread(T_DEV, IBLOCK(inum, sb));
+    dip = (struct dinode*)bp->data + inum%IPB;
+    if(dip->type != 0 && dip->nlink >0){  // allocated node is found
+      cprintf("%d\n",inum);
+      arr_Inode[inum] = 1;
+    }
+    brelse(bp);
+  }
+  return 1;
+}
+
+int dirArrCheck(void){
+	int i;
+	for(i=0;i<NUMINODES;i++){
+		if(arr_Directory[i] == 1){
+			return 1;
+		}
+	}
+	return -1;
+}
+
+int inoArrCheck(void){
+	int i;
+	for(i=0;i<NUMINODES;i++){
+		if(arr_Inode[i] == 1){
+			return 1;
+		}
+	}
+	return -1;
+}
+
+int walkerComparison(void){
+	int i;
+
+	if((inoArrCheck() == -1) || (dirArrCheck() ==-1)){
+		return -1;
+	}
+
+	for(i=1;i<NUMINODES;i++){
+		if((arr_Inode[i] == 1) && (arr_Directory[i] == 1)){
+			cprintf("Inode %d found in both walkers\n",i);
+		}
+    if((arr_Inode[i] == 0) && (arr_Directory[i] == 1)){
+      cprintf("Error! Inode %d found in Directory Walker but not in Inode Walker\n",i);
+    }
+    if((arr_Inode[i] == 1) && (arr_Directory[i] == 0)){
+			cprintf("Error! Inode %d found in Inode Walker but not in Directory Walker\n",i);
+		}
+    arr_Comparison[i] = arr_Inode[i]^arr_Directory[i];
+	}
+
+	return 1;
+}
+
+int eraseInode(int inum)
+{
+
+  if((inum<=1)||(inum>=NUMINODES)){
+    cprintf("Trying to Damage Root. Operation not allowed!\n");
+    return -1;
+  }
+  begin_op();
+  struct inode * inode_del = iget(T_DIR,inum);
+  cprintf("Trying to damge inode %d\n", inum);
+  if(inode_del->type != T_DIR){
+    cprintf("Unable to damage non-directory structure! Please choose a directory\n");
+    return -1;
+  }
+  ilock(inode_del);
+  itrunc(inode_del);
+  iunlockput(inode_del);
+  end_op();
+
+  cprintf("Inode %d has been damaged. Call dirWalker, inodeWalker and comparer to check!\n");
+
+  int i;
+  for(i=0;i<NUMINODES;i++)
+  {
+    arr_Directory[i] = 0;
+}
+
+  return inum;
+}
+
+
+int recoveryWalker(){
+ struct inode *dp = iget(T_DIR,1);
+ char name[512] = "Recovered File";
+  int i;
+  for(i=1;i<NUMINODES;i++){
+    if (arr_Comparison[i] == 1){
+      begin_op();
+      cprintf("Recovery for inode %d initiated \n",i);
+      dirlink(dp,name,i);
+      cprintf("Inode %d Recovered\n",i);
+      end_op();
+    }
+  }
+  return 1;
 }

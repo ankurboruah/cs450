@@ -25,7 +25,11 @@ int sleep(int);
 int uptime(void);
 int getcallcount(int);
 int myMemory(void);
-int fsop(int);
+int directoryWalker(char*);
+int inodeBMWalker(void);
+int walkerComparer(void);
+int damageDirectoryInode(int);
+int fsRecovery(void);
 
 // ulib.c
 int stat(char*, struct stat*);

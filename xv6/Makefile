@@ -161,14 +161,11 @@ mkfs: mkfs.c fs.h
 UPROGS=\
 	_cat\
 	_counttester\
-	_directoryWalker\
 	_echo\
-	_erasenode\
 	_exit\
 	_forktest\
 	_grep\
 	_init\
-	_inodeWalker\
 	_kill\
 	_ln\
 	_ls\
@@ -183,6 +180,11 @@ UPROGS=\
 	_usertests\
 	_wc\
 	_zombie\
+	_dirwalker\
+	_inodeWalker\
+	_comparer\
+	_erasenode\
+	_recover\
 
 fs.img: mkfs README $(UPROGS)
 	./mkfs fs.img README $(UPROGS)

@@ -22,4 +22,8 @@
 #define SYS_close  21
 #define SYS_getcallcount 22
 #define SYS_myMemory 23
-#define SYS_fsop 24
+#define SYS_directoryWalker 24
+#define SYS_inodeBMWalker 25
+#define SYS_walkerComparer 26
+#define SYS_damageDirectoryInode 27
+#define SYS_fsRecovery 28
